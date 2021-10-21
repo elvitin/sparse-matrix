@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NL 5
 #define NC 6
@@ -23,6 +24,17 @@ void inicializar(mEsp *vetLin[], mEsp *vetCol[])
     vetCol[i] = NULL;
 }
 
+mEsp *verificaOcupado(mEsp *vetLin[], int lin, int col)
+{
+  mEsp *aux = vetLin[lin];
+  while (aux != NULL && col > aux->col)
+    aux = aux->ponteiroLinha;
+
+  if (aux != NULL && col == aux->col)
+    return aux;
+  return NULL;
+}
+
 void exibir(mEsp *vetLin[])
 {
   int i;
@@ -36,23 +48,12 @@ void exibir(mEsp *vetLin[])
       aux = verificaOcupado(vetLin, i, j);
 
       if (aux)
-        printf("[%d]", aux->valor);
+        printf("[%0.2d]", aux->valor);
       else
-        printf("[0 ]");
+        printf("[00]");
     }
     putchar('\n');
   }
-}
-
-mEsp *verificaOcupado(mEsp *vetLin[], int lin, int col)
-{
-  mEsp *aux = vetLin[lin];
-  while (aux != NULL && col > aux->col)
-    aux = aux->ponteiroLinha;
-
-  if (aux != NULL && col == aux->col)
-    return aux;
-  return NULL;
 }
 
 void insere(mEsp *vetLin[], mEsp *vetCol[], int lin, int col, int valor)
@@ -109,6 +110,18 @@ void insere(mEsp *vetLin[], mEsp *vetCol[], int lin, int col, int valor)
 
 int main(void)
 {
-
+	mEsp *vetLin[NL];
+	mEsp *vetCol[NC];
+	
+	inicializar(vetLin, vetCol);
+	
+	insere(vetLin, vetCol, 0, 4, 9);
+	insere(vetLin, vetCol, 1, 1, 3);
+	insere(vetLin, vetCol, 2, 4, 35);
+	insere(vetLin, vetCol, 3, 2, 1);
+	insere(vetLin, vetCol, 3, 0, 5);
+	
+	exibir(vetLin);
+	
   return 0;
 }
