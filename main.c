@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define NL 5
-#define NC 6
+#define NL 3
+#define NC 3
 
 typedef struct matrizEsparsa
 {
@@ -108,7 +109,7 @@ void insere(mEsp *vetLin[], mEsp *vetCol[], int lin, int col, int valor)
   }
 }
 
-void soma (mEsp *vetLinA[], mEsp *vetLinB[], mEsp *vetLinC[], mEsp *vetColC[])
+void soma(mEsp *vetLinA[], mEsp *vetLinB[], mEsp *vetLinC[], mEsp *vetColC[])
 {
   int j;
   int soma;
@@ -139,43 +140,67 @@ void soma (mEsp *vetLinA[], mEsp *vetLinB[], mEsp *vetLinC[], mEsp *vetColC[])
   }
 }
 
-void somaMatrizes()
+void multiplica(mEsp *vetLinA[], mEsp *vetLinB[], mEsp *vetLinC[], mEsp *vetColC[])
+{
+  mEsp *auxA;
+  mEsp *auxB;
+
+  int c;
+  int k;
+  int soma;
+
+  for (int l = 0; l < NL; l++)
+    for (c = 0; c < NC; c++)
+    {
+      soma = 0;
+
+      for (k = 0; k < NC; k++)
+      {
+        auxA = verificaOcupado(vetLinA, l, k);
+        auxB = verificaOcupado(vetLinB, k, c);
+
+        if (auxA != NULL && auxB != NULL)
+          soma += auxA->valor * auxB->valor;
+      }
+
+      if (soma != 0)
+        insere(vetLinC, vetColC, l, c, soma);
+    }
+}
+
+void somaMatrizes(void)
 {
   //////////////////////////////////MATRIZ A
   mEsp *vetLin[NL];
-	mEsp *vetCol[NC];
+  mEsp *vetCol[NC];
 
-	inicializar(vetLin, vetCol);
-	
-	insere(vetLin, vetCol, 0, 4, 9);
-	insere(vetLin, vetCol, 1, 1, 3);
-	insere(vetLin, vetCol, 2, 4, 35);
-	insere(vetLin, vetCol, 3, 2, 1);
-	insere(vetLin, vetCol, 3, 0, 5);
-	
-	exibir(vetLin);
+  inicializar(vetLin, vetCol);
+
+  insere(vetLin, vetCol, 0, 4, 9);
+  insere(vetLin, vetCol, 1, 1, 3);
+  insere(vetLin, vetCol, 2, 4, 35);
+  insere(vetLin, vetCol, 3, 2, 1);
+  insere(vetLin, vetCol, 3, 0, 5);
+
+  exibir(vetLin);
   putchar('\n');
   //////////////////////////////////MATRIZ A
 
-
-
   //////////////////////////////////MATRIZ B
   mEsp *vetLinB[NL];
-	mEsp *vetColB[NC];
+  mEsp *vetColB[NC];
 
   inicializar(vetLinB, vetColB);
 
   insere(vetLinB, vetColB, 2, 0, 0);
-	insere(vetLinB, vetColB, 4, 3, 3);
-	insere(vetLinB, vetColB, 3, 4, 2);
+  insere(vetLinB, vetColB, 4, 3, 3);
+  insere(vetLinB, vetColB, 3, 4, 2);
 
   exibir(vetLinB);
   putchar('\n');
   //////////////////////////////////MATRIZ B
 
-
-
-  //////////////////////////////////MATRIZ C
+  //////////////////////////////////MATRIZ C (Soma)
   mEsp *vetLinC[NL];
   mEsp *vetColC[NC];
   inicializar(vetLinC, vetColC);
@@ -185,8 +210,46 @@ void somaMatrizes()
   //////////////////////////////////MATRIZ C
 }
 
+void multiplicaoMatrizes(void)
+{
+  srand(time(NULL));
+
+  //////////////////////////////////MATRIZ A
+  mEsp *vetLinA[NL];
+  mEsp *vetColA[NC];
+  inicializar(vetLinA, vetColA);
+  int c;
+  for (int l = 0; l < NL; l++)
+    for (c = 0; c < NC; c++)
+      insere(vetLinA, vetColA, l, c, 1 + rand() % 9);
+  exibir(vetLinA);
+  putchar('\n');
+  //////////////////////////////////MATRIZ A
+
+  //////////////////////////////////MATRIZ B
+  mEsp *vetLinB[NL];
+  mEsp *vetColB[NC];
+  inicializar(vetLinB, vetColB);
+  for (int l = 0; l < NL; l++)
+    for (c = 0; c < NC; c++)
+      insere(vetLinB, vetColB, l, c, 1 + rand() % 9);
+  exibir(vetLinB);
+  putchar('\n');
+  //////////////////////////////////MATRIZ B
+
+  //////////////////////////////////MATRIZ C (Multiplicacao)
+  mEsp *vetLinC[NL];
+  mEsp *vetColC[NC];
+  inicializar(vetLinC, vetColC);
+  multiplica(vetLinA, vetLinB, vetLinC, vetColC);
+  exibir(vetLinC);
+  putchar('\n');
+  //////////////////////////////////MATRIZ C
+}
+
 int main(void)
 {
-  somaMatrizes();
+  //somaMatrizes();
+  multiplicaoMatrizes();
   return 0;
 }
